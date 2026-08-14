@@ -23,6 +23,15 @@ from core.views import (
     UserViewSet,
 )
 
+from core.views import (
+    AutorViewSet,
+    CategoriaViewSet,
+    CompraViewSet, # inclua essa linha
+    EditoraViewSet,
+    LivroViewSet,
+    UserViewSet,
+)
+
 from django.conf import settings
 from django.conf.urls.static import static
 from uploader.models import document
@@ -34,6 +43,7 @@ router.register(r'categorias', CategoriaViewSet, basename='categorias')
 router.register(r'editoras', EditoraViewSet, basename='editoras')
 router.register(r'livros', LivroViewSet, basename='livros')
 router.register(r'usuarios', UserViewSet, basename='usuarios')
+router.register(r'compras', CompraViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
