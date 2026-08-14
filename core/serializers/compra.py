@@ -7,6 +7,7 @@ class ItensCompraSerializer(ModelSerializer):
     class Meta:
         model = ItensCompra
         fields = '__all__'
+        depth = 1
 
 class CompraSerializer(ModelSerializer):
     usuario = CharField(source='usuario.email', read_only=True) # inclua essa linha 
@@ -20,4 +21,4 @@ class CompraSerializer(ModelSerializer):
 class ItensCompraSerializer(ModelSerializer):
     class Meta:
         model = ItensCompra
-        fields = '__all__'
+        fields = ('livro', 'quantidade')
