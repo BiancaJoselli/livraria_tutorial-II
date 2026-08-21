@@ -3,6 +3,8 @@ from rest_framework.serializers import ModelSerializer
 from rest_framework.serializers import CharField, DecimalField, ModelSerializer, SerializerMethodField
 from core.models import Compra
 from core.models import Compra, ItensCompra
+from django.db import transaction
+
 
 class ItensCompraSerializer(ModelSerializer):
     titulo =CharField(source='livro.titulo', read_only=True)
@@ -18,6 +20,27 @@ class ItensCompraSerializer(ModelSerializer):
     class Meta:
         model = ItensCompra
         fields = ('id', 'titulo', 'editora', 'quantidade', 'preco', 'capa')
+        
+class ItensCompraCreateUpdateSerializer(ModelSerializer):
+    class Meta:
+        model = ItensCompra
+        fields = ('livro', 'quantidade')
+
+class CompraCreateUpdateSerializer(ModelSerializer):
+    itens = ItensCompraCreateUpdateSerializer(many=True)
+
+    class Meta:
+        model = Compra
+        fields = ('id', 'usuario', 'itens')
+
+    @transaction.atomic
+    def create(self, validated_data):
+        itens_data = validated_data.pop('itens')
+        compra = Compra.objects.create(**validated_data)
+        for item_data in itens_data:
+            ItensCompra.objects.create(compra=compra, **item_data)
+        compra.save()
+        return compra
 
 class CompraSerializer(ModelSerializer):
     usuario = CharField(source='usuario.email', read_only=True) # inclua essa linha 
@@ -28,7 +51,6 @@ class CompraSerializer(ModelSerializer):
     class Meta:
         model = Compra
         fields = ('id', 'usuario', 'status', 'total', 'itens')
-        
 
-        
+
         
