@@ -1,6 +1,6 @@
 from django.forms.fields import DecimalField
 from rest_framework.serializers import ModelSerializer
-from rest_framework.serializers import CharField, CurrentUserDefault, HiddenField, DecimalField, ModelSerializer, SerializerMethodField
+from rest_framework.serializers import ( CharField, CurrentUserDefault,HiddenField, ModelSerializer,SerializerMethodField, ValidationError,)
 from core.models import Compra
 from core.models import Compra, ItensCompra
 from django.db import transaction
@@ -26,6 +26,16 @@ class ItensCompraCreateUpdateSerializer(ModelSerializer):
         model = ItensCompra
         fields = ('livro', 'quantidade')
 
+    def validate_quantidade(self, quantidade):
+        if quantidade <= 0:
+            raise ValidationError('A quantidade deve ser maior do que zero.')
+        return quantidade
+
+    def validate(self, item):
+        if item['quantidade'] > item['livro'].quantidade:
+            raise ValidationError('Quantidade de itens maior do que a quantidade em estoque.')
+        return item
+    
 class CompraCreateUpdateSerializer(ModelSerializer):
     usuario = HiddenField(default=CurrentUserDefault())
 
