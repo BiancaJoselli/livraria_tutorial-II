@@ -1,6 +1,6 @@
 from django.forms.fields import DecimalField
 from rest_framework.serializers import ModelSerializer
-from rest_framework.serializers import ( CharField, CurrentUserDefault,HiddenField, ModelSerializer,SerializerMethodField, ValidationError,)
+from rest_framework.serializers import ( CharField, CurrentUserDefault,DateTimeField, HiddenField, ModelSerializer,SerializerMethodField, ValidationError,)
 from core.models import Compra
 from core.models import Compra, ItensCompra
 from django.db import transaction
@@ -70,13 +70,14 @@ class CompraCreateUpdateSerializer(ModelSerializer):
 
 class CompraSerializer(ModelSerializer):
     usuario = CharField(source='usuario.email', read_only=True) # inclua essa linha 
+    data = DateTimeField(read_only=True) # novo campo
     status = CharField(source='get_status_display', read_only=True) # inclua essa linha
     itens = ItensCompraSerializer(many=True, read_only=True)
     
 
     class Meta:
         model = Compra
-        fields = ('id', 'usuario', 'status', 'total', 'itens')
+        fields = ('id', 'usuario', 'status', 'total', 'data', 'itens') # modificado
 
 class ItensCompraListSerializer(ModelSerializer):
     livro = CharField(source='livro.titulo', read_only=True)
