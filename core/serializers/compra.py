@@ -1,7 +1,6 @@
 from django.forms.fields import DecimalField
 from rest_framework.serializers import ModelSerializer
 from rest_framework.serializers import ( CharField, CurrentUserDefault,DateTimeField, HiddenField, ModelSerializer,SerializerMethodField, ValidationError,)
-from core.models import Compra
 from core.models import Compra, ItensCompra
 from django.db import transaction
 

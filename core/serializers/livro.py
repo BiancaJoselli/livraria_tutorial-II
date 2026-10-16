@@ -1,4 +1,4 @@
-from rest_framework.serializers import (DecimalField, ModelSerializer, Serializer, SlugRelatedField, ValidationError)
+from rest_framework.serializers import (DecimalField,IntegerField, ModelSerializer, Serializer, SlugRelatedField, ValidationError)
 from uploader.models import Image
 from uploader.serializers import ImageSerializer
 
@@ -42,3 +42,10 @@ class LivroAlterarPrecoSerializer(Serializer):
         if preco <= 0:
             raise ValidationError('O preço deve ser um valor positivo.')
         return preco
+
+class LivroMaisVendidoSerializer(ModelSerializer):
+    total_vendidos = IntegerField()
+
+    class Meta:
+        model = Livro
+        fields = ('id', 'titulo', 'total_vendidos')
