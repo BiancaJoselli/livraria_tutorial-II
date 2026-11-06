@@ -4,13 +4,23 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
+from rest_framework.filters import SearchFilter, OrderingFilter
+
+
 
 
 from core.models import Compra
 from core.serializers.compra import (CompraCreateUpdateSerializer, CompraListSerializer, CompraSerializer,)
 
 class CompraViewSet(ModelViewSet):
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    filterset_fields = ['usuario__email', 'status', 'data']
+    search_fields = ['usuario__email']
+    ordering_fields = ['usuario__email', 'status', 'data']
+    ordering = ['-data']
+
     def get_queryset(self):
         usuario = self.request.user
         if usuario.is_superuser:
@@ -18,6 +28,7 @@ class CompraViewSet(ModelViewSet):
         if usuario.groups.filter(name='administradores'):
             return Compra.objects.all()
         return Compra.objects.filter(usuario=usuario)
+    
 
     @extend_schema(
         request=None,
